@@ -103,9 +103,6 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
         </div>
 
         <div className="mt-8 pt-6 border-t border-gray-200">
-          <p className="text-xs text-gray-500 text-center">
-            Demo sequences: AF2024 (Afnan) or ZU2024 (Zuhaer)
-          </p>
         </div>
       </div>
     </div>
