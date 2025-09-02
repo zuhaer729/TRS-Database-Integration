@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TabType } from './types/workout';
 import { useWorkoutData } from './hooks/useWorkoutData';
 import { Login } from './components/Login';
@@ -12,7 +12,8 @@ function App() {
   const [activeTab, setActiveTab] = useState<TabType>('track');
   const [currentUser, setCurrentUserState] = useState<UserType | null>(null);
 
-  React.useEffect(() => {
+  // Restore user from localStorage on mount
+  useEffect(() => {
     const savedUser = localStorage.getItem("currentUser");
     if (savedUser) {
       setCurrentUserState(JSON.parse(savedUser));
@@ -30,21 +31,6 @@ function App() {
     setCurrentUserState(null);
     setActiveTab('track');
     localStorage.removeItem("currentUser"); // clear login
-  };
-
-  if (!currentUser) {
-    return <Login onLogin={handleLogin} />;
-  }
-  
-  const workoutData = useWorkoutData(currentUser?.id || '');
-
-  const handleLogin = (user: UserType) => {
-    setCurrentUserState(user);
-  };
-
-  const handleLogout = () => {
-    setCurrentUserState(null);
-    setActiveTab('track');
   };
 
   if (!currentUser) {
@@ -111,6 +97,7 @@ function App() {
           </button>
         </div>
       </header>
+
       {/* Main Content */}
       <main className="min-h-screen pt-0">
         {renderActiveTab()}
