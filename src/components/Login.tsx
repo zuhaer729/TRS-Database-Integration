@@ -101,9 +101,6 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
             )}
           </button>
         </div>
-
-        <div className="mt-8 pt-6 border-t border-gray-200">
-        </div>
       </div>
     </div>
   );
