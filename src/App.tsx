@@ -12,6 +12,30 @@ function App() {
   const [activeTab, setActiveTab] = useState<TabType>('track');
   const [currentUser, setCurrentUserState] = useState<UserType | null>(null);
 
+  React.useEffect(() => {
+    const savedUser = localStorage.getItem("currentUser");
+    if (savedUser) {
+      setCurrentUserState(JSON.parse(savedUser));
+    }
+  }, []);
+
+  const workoutData = useWorkoutData(currentUser?.id || '');
+
+  const handleLogin = (user: UserType) => {
+    setCurrentUserState(user);
+    localStorage.setItem("currentUser", JSON.stringify(user)); // save login
+  };
+
+  const handleLogout = () => {
+    setCurrentUserState(null);
+    setActiveTab('track');
+    localStorage.removeItem("currentUser"); // clear login
+  };
+
+  if (!currentUser) {
+    return <Login onLogin={handleLogin} />;
+  }
+  
   const workoutData = useWorkoutData(currentUser?.id || '');
 
   const handleLogin = (user: UserType) => {
