@@ -6,29 +6,19 @@ import { TrackTab } from './components/TrackTab';
 import { RoutineTab } from './components/RoutineTab';
 import { StatsTab } from './components/StatsTab';
 import { Trophy, Settings, BarChart3, LogOut, User } from 'lucide-react';
-import { getCurrentUser, setCurrentUser, logout } from './utils/storage';
 import { User as UserType } from './types/workout';
 
 function App() {
   const [activeTab, setActiveTab] = useState<TabType>('track');
-  const [currentUser, setCurrentUserState] = useState<UserType | null>(() => {
-    const userId = getCurrentUser();
-    if (userId) {
-      // Return a basic user object - in real app this would come from database
-      return { id: userId, name: userId === 'afnan' ? 'Afnan' : 'Zuhaer', sequence: '' };
-    }
-    return null;
-  });
+  const [currentUser, setCurrentUserState] = useState<UserType | null>(null);
 
   const workoutData = useWorkoutData(currentUser?.id || '');
 
   const handleLogin = (user: UserType) => {
-    setCurrentUser(user.id);
     setCurrentUserState(user);
   };
 
   const handleLogout = () => {
-    logout();
     setCurrentUserState(null);
     setActiveTab('track');
   };
@@ -49,6 +39,7 @@ function App() {
         return (
           <TrackTab
             data={workoutData.data}
+            loading={workoutData.loading}
             onSelectDay={workoutData.selectDay}
             onMarkDayCompleted={workoutData.markDayCompleted}
             onUpdateWorkoutSets={workoutData.updateWorkoutSets}
@@ -59,6 +50,7 @@ function App() {
         return (
           <RoutineTab
             data={workoutData.data}
+            loading={workoutData.loading}
             onAddDay={workoutData.addDay}
             onRemoveDay={workoutData.removeDay}
             onAddWorkout={workoutData.addWorkout}

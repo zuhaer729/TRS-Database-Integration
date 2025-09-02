@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { User } from '../types/workout';
-import { authenticateUser } from '../utils/storage';
+import { WorkoutService } from '../services/workoutService';
 import { Dumbbell, LogIn } from 'lucide-react';
 
 interface LoginProps {
@@ -21,16 +21,18 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
     setIsLoading(true);
     setError('');
 
-    // Simulate a brief loading state for better UX
-    setTimeout(() => {
-      const user = authenticateUser(sequence.trim());
+    try {
+      const user = await WorkoutService.authenticateUser(sequence.trim());
       if (user) {
         onLogin(user);
       } else {
         setError('Invalid sequence. Please try again.');
       }
+    } catch (error) {
+      setError('Connection error. Please try again.');
+    } finally {
       setIsLoading(false);
-    }, 500);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {

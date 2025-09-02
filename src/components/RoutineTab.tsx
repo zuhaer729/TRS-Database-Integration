@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { WorkoutData, Workout, RepRange } from '../types/workout';
-import { Plus, Trash2, Edit3, Settings, ChevronDown, ChevronUp } from 'lucide-react';
+import { Plus, Trash2, Edit3, Settings, ChevronDown, ChevronUp, Loader2 } from 'lucide-react';
 
 interface RoutineTabProps {
   data: WorkoutData;
+  loading: boolean;
   onAddDay: (name: string) => void;
   onRemoveDay: (dayId: string) => void;
   onAddWorkout: (dayId: string, workout: Omit<Workout, 'id' | 'todaySets' | 'completed'>) => void;
@@ -29,6 +30,7 @@ const parseRepInput = (input: string): RepRange => {
 };
 export const RoutineTab: React.FC<RoutineTabProps> = ({
   data,
+  loading,
   onAddDay,
   onRemoveDay,
   onAddWorkout,
@@ -57,9 +59,12 @@ export const RoutineTab: React.FC<RoutineTabProps> = ({
 
   const handleAddWorkout = (dayId: string) => {
     if (newWorkout.name.trim()) {
-      onAddWorkout(dayId, newWorkout);
-      setNewWorkout({ name: '', defaultSets: 3, defaultReps: '8-12', machineSetupNotes: '' });
+      onAddWorkout(dayId, {
+        ...newWorkout,
         defaultReps: parseRepInput(newWorkout.defaultReps)
+      });
+      setNewWorkout({ name: '', defaultSets: 3, defaultReps: '8-12', machineSetupNotes: '' });
+      setShowAddWorkout(null);
     }
   };
 
@@ -77,6 +82,24 @@ export const RoutineTab: React.FC<RoutineTabProps> = ({
     setEditingWorkout(null);
     setEditingReps('');
   };
+
+  if (loading) {
+    return (
+      <div className="p-4 pb-20">
+        <div className="flex items-center space-x-3 mb-6">
+          <Settings className="h-6 w-6 text-blue-600" />
+          <h1 className="text-2xl font-bold text-gray-900">Routine</h1>
+        </div>
+        <div className="flex items-center justify-center py-20">
+          <div className="flex flex-col items-center space-y-4">
+            <Loader2 className="h-8 w-8 text-blue-600 animate-spin" />
+            <p className="text-gray-600">Loading your routine...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-4 pb-20">
       <div className="flex items-center space-x-3 mb-6">

@@ -2,10 +2,11 @@ import React from 'react';
 import { WorkoutData } from '../types/workout';
 import { DaySelector } from './DaySelector';
 import { WorkoutItem } from './WorkoutItem';
-import { Trophy, CheckCircle } from 'lucide-react';
+import { Trophy, CheckCircle, Loader2 } from 'lucide-react';
 
 interface TrackTabProps {
   data: WorkoutData;
+  loading: boolean;
   onSelectDay: (dayId: string) => void;
   onMarkDayCompleted: (dayId: string) => void;
   onUpdateWorkoutSets: (dayId: string, workoutId: string, sets: any[]) => void;
@@ -14,6 +15,7 @@ interface TrackTabProps {
 
 export const TrackTab: React.FC<TrackTabProps> = ({
   data,
+  loading,
   onSelectDay,
   onMarkDayCompleted,
   onUpdateWorkoutSets,
@@ -22,6 +24,23 @@ export const TrackTab: React.FC<TrackTabProps> = ({
   const selectedDay = data.days.find(day => day.id === data.selectedDayId);
   const allWorkoutsCompleted = selectedDay?.workouts.length > 0 && selectedDay.workouts.every(w => w.completed);
   const hasAnyProgress = selectedDay?.workouts.some(w => w.todaySets.length > 0);
+
+  if (loading) {
+    return (
+      <div className="p-4 pb-20">
+        <div className="flex items-center space-x-3 mb-6">
+          <Trophy className="h-6 w-6 text-blue-600" />
+          <h1 className="text-2xl font-bold text-gray-900">Track Workout</h1>
+        </div>
+        <div className="flex items-center justify-center py-20">
+          <div className="flex flex-col items-center space-y-4">
+            <Loader2 className="h-8 w-8 text-blue-600 animate-spin" />
+            <p className="text-gray-600">Loading your workout data...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 pb-20">
