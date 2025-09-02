@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { User } from '../types/workout';
 import { WorkoutService } from '../services/workoutService';
 import { Dumbbell, LogIn } from 'lucide-react';
@@ -12,6 +12,14 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  // 🔑 Auto-login if user already exists in localStorage
+  useEffect(() => {
+    const savedUser = localStorage.getItem("currentUser");
+    if (savedUser) {
+      onLogin(JSON.parse(savedUser));
+    }
+  }, [onLogin]);
+
   const handleLogin = async () => {
     if (!sequence.trim()) {
       setError('Please enter your sequence');
@@ -24,6 +32,7 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
     try {
       const user = await WorkoutService.authenticateUser(sequence.trim());
       if (user) {
+        localStorage.setItem("currentUser", JSON.stringify(user)); // save login
         onLogin(user);
       } else {
         setError('Invalid sequence. Please try again.');
